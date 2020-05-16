@@ -3,6 +3,9 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
+
+import javax.naming.ldap.InitialLdapContext;
 
 import application.Main;
 import gui.util.Alerts;
@@ -35,12 +38,16 @@ public class MainViewController implements Initializable {
 	
 	@FXML
 	public void onMenuItemDepartamentoAction() {
-		loadView2("/gui/DepartmentList.fxml");
+		loadView("/gui/DepartmentList.fxml", (DepartmentListController controller)->{//passa como parametro uma função de inicializaçã lambda
+				controller.setDepartmentService(new DepartmentService());
+				controller.updateTableView();
+		});
+	
 	}
 	
 	@FXML
 	public void onMenuItemSobreAction() {
-		loadView("/gui/Sobre.fxml");
+		loadView("/gui/Sobre.fxml", x -> {});//como não precisa executar nada, a função lambda envia parametro vazio
 	}
 
 	@Override
@@ -48,7 +55,8 @@ public class MainViewController implements Initializable {
 
 	}
 	
-	private synchronized void loadView(String absName) {//synchronized garante que as threads da GUI nao sejam encerradas inesperadamente
+	//necessário tornar genérica para não precisar ficar criando várias loadview
+	private synchronized <T> void loadView(String absName, Consumer<T> initializingAction) {//synchronized garante que as threads da GUI nao sejam encerradas inesperadamente
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absName));
 			VBox newVBox = loader.load();
@@ -61,30 +69,11 @@ public class MainViewController implements Initializable {
 			mainVBox.getChildren().add(mainMenu);
 			mainVBox.getChildren().addAll(newVBox.getChildren());
 			
+			T controller = loader.getController(); // recebe um controller genérico do tipo que receber			
+			initializingAction.accept(controller);//inicializa o controller
 		}catch(IOException e) {
 			Alerts.showAlert("IOException", "Erro ao carregara view", e.getMessage(), AlertType.ERROR);
 		}
-	}
-	
-	private synchronized void loadView2(String absName) {//synchronized garante que as threads da GUI nao sejam encerradas inesperadamente
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absName));
-			VBox newVBox = loader.load();
-			
-			Scene mainScene = Main.getMainScene();
-			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();//pega o 1o elemento da view principal
-			
-			Node mainMenu = mainVBox.getChildren().get(0);//pega o primeiro filho da VBox
-			mainVBox.getChildren().clear();
-			mainVBox.getChildren().add(mainMenu);
-			mainVBox.getChildren().addAll(newVBox.getChildren());
-			
-			DepartmentListController controller = loader.getController();//pega a ref para o controller da view
-			controller.setDepartmentService(new DepartmentService());
-			controller.updateTableView();			
-		}catch(IOException e) {
-			Alerts.showAlert("IOException", "Erro ao carregara view", e.getMessage(), AlertType.ERROR);
-		}
-	}
+	}	
 
 }

@@ -12,8 +12,7 @@ public class DepartmentService {
 		List<Departamento> list = new ArrayList<>();
 		list.add(new Departamento(1,"Livros"));
 		list.add(new Departamento(2,"DVDS"));
-		list.add(new Departamento(3,"Computadores"));		
-		System.out.println("retornou lista");
+		list.add(new Departamento(3,"Computadores"));
 		return list;
 	}
 }
