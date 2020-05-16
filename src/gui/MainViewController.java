@@ -5,8 +5,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-import javax.naming.ldap.InitialLdapContext;
-
 import application.Main;
 import gui.util.Alerts;
 import javafx.fxml.FXML;
@@ -72,7 +70,7 @@ public class MainViewController implements Initializable {
 			T controller = loader.getController(); // recebe um controller genérico do tipo que receber			
 			initializingAction.accept(controller);//inicializa o controller
 		}catch(IOException e) {
-			Alerts.showAlert("IOException", "Erro ao carregara view", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("IOException", "Erro ao carregar a view", e.getMessage(), AlertType.ERROR);
 		}
 	}	
 
