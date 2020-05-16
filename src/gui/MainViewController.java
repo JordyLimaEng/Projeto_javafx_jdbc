@@ -16,30 +16,33 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
-import model.services.DepartmentService;
+import model.services.SellerService;
 
 public class MainViewController implements Initializable {
 
 	@FXML
-	private MenuItem menuItemVendedor;
+	private MenuItem menuItemSeller;
 	
 	@FXML
-	private MenuItem menuItemDepartamento;
+	private MenuItem menuItemDepartment;
 	
 	@FXML
 	private MenuItem menuItemSobre;
 	
 	@FXML
-	public void onMenuItemVendedorAction() {
-		System.out.println("onMenuItemVendedorAction");
+	public void onMenuItemSellerAction() {
+		loadView("/gui/SellerList.fxml", (SellerListController controller)->{//passa como parametro uma função de inicializaçã lambda
+			controller.setSellerService(new SellerService());
+			controller.updateTableView();
+	});
 	}
 	
 	@FXML
-	public void onMenuItemDepartamentoAction() {
-		loadView("/gui/DepartmentList.fxml", (DepartmentListController controller)->{//passa como parametro uma função de inicializaçã lambda
-				controller.setDepartmentService(new DepartmentService());
-				controller.updateTableView();
-		});
+	public void onMenuItemDepartmentAction() {
+//		loadView("/gui/DepartmentList.fxml", (DepartmentListController controller)->{//passa como parametro uma função de inicializaçã lambda
+//				controller.setDepartmentService(new DepartmentService());
+//				controller.updateTableView();
+//		});
 	
 	}
 	
